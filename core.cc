@@ -239,7 +239,7 @@ InstFetchU::InstFetchU(ParseXML* XML_interface, int ithCore_, InputParameter* in
     	  line                             = XML->sys.core[ithCore].BTB.BTB_config[1];
     	  assoc                            = XML->sys.core[ithCore].BTB.BTB_config[2];
     	  banks                            = XML->sys.core[ithCore].BTB.BTB_config[3];
-    	  idx    					 	   = debug?9:int(ceil(log2(size/line/assoc)));
+//    	  idx    					 	   = debug?9:int(ceil(log2(size/line/assoc)));
 //    	  tag							   = debug?51:XML->sys.virtual_address_width-idx-int(ceil(log2(line))) + int(ceil(log2(XML->sys.core[ithCore].number_hardware_threads))) +EXTRA_TAG_BITS;
     	  tag							   = debug?51:XML->sys.virtual_address_width + int(ceil(log2(XML->sys.core[ithCore].number_hardware_threads))) +EXTRA_TAG_BITS;
     	  interface_ip.is_cache			   = true;
@@ -4141,20 +4141,17 @@ void Core::displayEnergy(uint32_t indent,int plevel,bool is_tdp)
 				exu->displayEnergy(indent+4,plevel,is_tdp);
 			}
 		}
-		if (plevel >2)
+		if (undiffCore->exist)
 		{
-			if (undiffCore->exist)
-			{
-				cout << indent_str << "Undifferentiated Core" << endl;
-				cout << indent_str_next << "Area = " << undiffCore->area.get_area()*1e-6<< " mm^2" << endl;
-				cout << indent_str_next << "Peak Dynamic = " << undiffCore->power.readOp.dynamic*clockRate << " W" << endl;
+			cout << indent_str << "Undifferentiated Core" << endl;
+			cout << indent_str_next << "Area = " << undiffCore->area.get_area()*1e-6<< " mm^2" << endl;
+			cout << indent_str_next << "Peak Dynamic = " << undiffCore->power.readOp.dynamic*clockRate << " W" << endl;
 //				cout << indent_str_next << "Subthreshold Leakage = " << undiffCore->power.readOp.leakage <<" W" << endl;
-				cout << indent_str_next << "Subthreshold Leakage = "
-								<< (long_channel? undiffCore->power.readOp.longer_channel_leakage:undiffCore->power.readOp.leakage)   << " W" << endl;
-				cout << indent_str_next << "Gate Leakage = " << undiffCore->power.readOp.gate_leakage << " W" << endl;
-				//		cout << indent_str_next << "Runtime Dynamic = " << undiffCore->rt_power.readOp.dynamic/executionTime << " W" << endl;
-				cout <<endl;
-			}
+			cout << indent_str_next << "Subthreshold Leakage = "
+							<< (long_channel? undiffCore->power.readOp.longer_channel_leakage:undiffCore->power.readOp.leakage)   << " W" << endl;
+			cout << indent_str_next << "Gate Leakage = " << undiffCore->power.readOp.gate_leakage << " W" << endl;
+			//		cout << indent_str_next << "Runtime Dynamic = " << undiffCore->rt_power.readOp.dynamic/executionTime << " W" << endl;
+			cout <<endl;
 		}
 		if (XML->sys.Private_L2)
 		{
@@ -4290,7 +4287,7 @@ void Core::set_core_param()
     coredynp.issueW    = XML->sys.core[ithCore].issue_width;
     coredynp.peak_issueW   = XML->sys.core[ithCore].peak_issue_width;
     coredynp.commitW       = XML->sys.core[ithCore].commit_width;
-    coredynp.peak_commitW  = XML->sys.core[ithCore].peak_issue_width;
+    coredynp.peak_commitW  = XML->sys.core[ithCore].commit_width;
     coredynp.predictionW   = XML->sys.core[ithCore].prediction_width;
     coredynp.fp_issueW     = XML->sys.core[ithCore].fp_issue_width;
     coredynp.fp_decodeW    = XML->sys.core[ithCore].fp_issue_width;
