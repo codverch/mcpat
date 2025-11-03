@@ -1770,7 +1770,7 @@ void init_tech_params(double technology, bool is_tag)
         SENSE_AMP_D = .02e-9; // s
         SENSE_AMP_P = 2.06e-15; // J
     	
-	vdd[0] = 0.7;
+	vdd[0] = 0.75;
         vdd_real[0] = g_ip->specific_hp_vdd ? g_ip->hp_Vdd : vdd[0];
         alpha_power_law[0] = 1.2;
         Lphy[0] = 0.007;//Lphy is the physical gate-length.
@@ -1964,20 +1964,20 @@ void init_tech_params(double technology, bool is_tag)
         }
 
         //SRAM cell properties
-        curr_Wmemcella_sram      = 1.31 * g_ip->F_sz_um*1.6;
-        curr_Wmemcellpmos_sram   = 1.23 * g_ip->F_sz_um*1.6;
-        curr_Wmemcellnmos_sram   = 2.08 * g_ip->F_sz_um*1.6;
-        curr_area_cell_sram      = 146 * g_ip->F_sz_um * g_ip->F_sz_um * 3;
+        curr_Wmemcella_sram      = 1.31 * g_ip->F_sz_um*1.94;
+        curr_Wmemcellpmos_sram   = 1.23 * g_ip->F_sz_um*1.94;
+        curr_Wmemcellnmos_sram   = 2.08 * g_ip->F_sz_um*1.94;
+        curr_area_cell_sram      = 146 * g_ip->F_sz_um * g_ip->F_sz_um * 3.77;
         curr_asp_ratio_cell_sram = 1.46;
         //CAM cell properties 
-        curr_Wmemcella_cam = 1.31 * g_ip->F_sz_um*1.6;
-        curr_Wmemcellpmos_cam = 1.23 * g_ip->F_sz_um*1.6;
-        curr_Wmemcellnmos_cam = 2.08 * g_ip->F_sz_um*1.6;
-        curr_area_cell_cam = 292 * g_ip->F_sz_um * g_ip->F_sz_um*3;
+        curr_Wmemcella_cam = 1.31 * g_ip->F_sz_um*1.94;
+        curr_Wmemcellpmos_cam = 1.23 * g_ip->F_sz_um*1.94;
+        curr_Wmemcellnmos_cam = 2.08 * g_ip->F_sz_um*1.94;
+        curr_area_cell_cam = 292 * g_ip->F_sz_um * g_ip->F_sz_um*3.77;
         curr_asp_ratio_cell_cam = 2.92;
         //Empirical undifferetiated core/FU coefficient
-        curr_logic_scaling_co_eff  = 0.7*0.7*0.7*0.7*0.7*0.7*0.7*0.7*0.7;
-        curr_core_tx_density       = 1.25/0.7/0.7/0.7/0.7/0.7/0.7;
+        curr_logic_scaling_co_eff  = 1/60.4;
+        curr_core_tx_density       = 1.25*0.7*0.7*60;
         curr_sckt_co_eff           = 1.2296;
         curr_chip_layout_overhead  = 1.2;//die measurement results based on Niagara 1 and 2
         curr_macro_layout_overhead = 1.1;//EDA placement and routing tool rule of thumb

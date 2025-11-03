@@ -786,15 +786,15 @@ InputParameter::display_ip()
   cout << "Page size                     : " << page_sz_bits << endl;
   cout << "Burst length                  : " << burst_len << endl;
   cout << "Internal prefetch width       : " << int_prefetch_w << endl;
-  cout << "Force cache config            : " << g_ip->force_cache_config << endl;
-  if (g_ip->force_cache_config) {
-    cout << "Ndwl                          : " << g_ip->ndwl << endl;
-    cout << "Ndbl                          : " << g_ip->ndbl << endl;
-    cout << "Nspd                          : " << g_ip->nspd << endl;
-    cout << "Ndcm                          : " << g_ip->ndcm << endl;
-    cout << "Ndsam1                        : " << g_ip->ndsam1 << endl;
-    cout << "Ndsam2                        : " << g_ip->ndsam2 << endl;
-  }
+  // cout << "Force cache config            : " << g_ip->force_cache_config << endl;
+  // if (g_ip->force_cache_config) {
+  //   cout << "Ndwl                          : " << g_ip->ndwl << endl;
+  //   cout << "Ndbl                          : " << g_ip->ndbl << endl;
+  //   cout << "Nspd                          : " << g_ip->nspd << endl;
+  //   cout << "Ndcm                          : " << g_ip->ndcm << endl;
+  //   cout << "Ndsam1                        : " << g_ip->ndsam1 << endl;
+  //   cout << "Ndsam2                        : " << g_ip->ndsam2 << endl;
+  // }
  // cout << "Placing subarray out driver vertical?     : " << g_ip->cl_vertical << endl;
 }
 
@@ -1378,31 +1378,31 @@ bool InputParameter::error_checking()
   uint32_t NSER = num_se_rd_ports;
   uint32_t SCHP = num_search_ports;
 
-//TODO: revisit this. This is an important feature. Sheng thought this should be used
-//  // If multiple banks and multiple ports are specified, then if number of ports is less than or equal to
-//  // the number of banks, we assume that the multiple ports are implemented via the multiple banks.
-//  // In such a case we assume that each bank has 1 RWP port.
-//  if ((RWP + ERP + EWP) <= nbanks && nbanks>1)
-//  {
-//    RWP  = 1;
-//    ERP  = 0;
-//    EWP  = 0;
-//    NSER = 0;
-//  }
-//  else if ((RWP < 0) || (EWP < 0) || (ERP < 0))
-//  {
-//    cerr << "Ports must >=0" << endl;
-//    return false;
-//  }
-//  else if (RWP > 2)
-//  {
-//    cerr << "Maximum of 2 read/write ports" << endl;
-//    return false;
-//  }
-//  else if ((RWP+ERP+EWP) < 1)
-  // Changed to new implementation:
-  // The number of ports specified at input is per bank
-  if ((RWP+ERP+EWP) < 1)
+ // TODO: revisit this. This is an important feature. Sheng thought this should be used
+ // If multiple banks and multiple ports are specified, then if number of ports is less than or equal to
+ // the number of banks, we assume that the multiple ports are implemented via the multiple banks.
+ // In such a case we assume that each bank has 1 RWP port.
+  if ((RWP + ERP + EWP) <= nbanks && nbanks>1)
+  {
+    RWP  = 1;
+    ERP  = 0;
+    EWP  = 0;
+    NSER = 0;
+  }
+  else if ((RWP < 0) || (EWP < 0) || (ERP < 0))
+  {
+    cerr << "Ports must >=0" << endl;
+    return false;
+  }
+  else if (RWP > 2)
+  {
+    cerr << "Maximum of 2 read/write ports" << endl;
+    return false;
+  }
+  else if ((RWP+ERP+EWP) < 1)
+  // // Changed to new implementation:
+  // // The number of ports specified at input is per bank
+  // if ((RWP+ERP+EWP) < 1)
   {
     cerr << "Must have at least one port" << endl;
     return false;
@@ -1501,11 +1501,11 @@ bool InputParameter::error_checking()
     {
       //fully_assoc = false;
       A = assoc;
-      if (is_pow2(A) == false)
-      {
-        cerr << "Associativity must be a power of 2" << endl;
-        return false;
-      }
+      // if (is_pow2(A) == false)
+      // {
+      //   cerr << "Associativity must be a power of 2" << endl;
+      //   return false;
+      // }
     }
   }
 

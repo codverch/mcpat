@@ -4143,7 +4143,7 @@ void Core::displayEnergy(uint32_t indent,int plevel,bool is_tdp)
 		}
 		if (undiffCore->exist)
 		{
-			cout << indent_str << "Undifferentiated Core" << endl;
+			cout << indent_str << "Undifferentiated Core:" << endl;
 			cout << indent_str_next << "Area = " << undiffCore->area.get_area()*1e-6<< " mm^2" << endl;
 			cout << indent_str_next << "Peak Dynamic = " << undiffCore->power.readOp.dynamic*clockRate << " W" << endl;
 //				cout << indent_str_next << "Subthreshold Leakage = " << undiffCore->power.readOp.leakage <<" W" << endl;
