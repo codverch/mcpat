@@ -1394,11 +1394,11 @@ bool InputParameter::error_checking()
     cerr << "Ports must >=0" << endl;
     return false;
   }
-  else if (RWP > 2)
-  {
-    cerr << "Maximum of 2 read/write ports" << endl;
-    return false;
-  }
+  // else if (RWP > 2)
+  // {
+  //   cerr << "Maximum of 2 read/write ports" << endl;
+  //   return false;
+  // }
   else if ((RWP+ERP+EWP) < 1)
   // // Changed to new implementation:
   // // The number of ports specified at input is per bank
