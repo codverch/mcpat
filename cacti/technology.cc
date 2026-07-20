@@ -3023,7 +3023,7 @@ void init_tech_params(double technology, bool is_tag)
         
         }
 
-    else if (tech == 16 || tech == 7)
+    else if (tech == 16)
         {
           //Aggressive projections.
           wire_pitch[0][0] = 2.5 * g_ip->F_sz_um;//local
@@ -3208,6 +3208,191 @@ void init_tech_params(double technology, bool is_tag)
 //            		ild_thickness, miller_value, horiz_dielectric_constant, vert_dielectric_constant,
 //            		fringe_cap);
         }
+      else if (tech == 7)
+      {
+        //Aggressive projections.
+        wire_pitch[0][0] = 2.5 * g_ip->F_sz_um;//local
+        aspect_ratio[0][0] = 3.0;
+        wire_width = wire_pitch[0][0] / 2;
+        wire_thickness = aspect_ratio[0][0] * wire_width;
+        wire_spacing = wire_pitch[0][0] - wire_width;
+        barrier_thickness = 0;
+        dishing_thickness = 0;
+        alpha_scatter = 1;
+        wire_r_per_micron[0][0] = wire_resistance(BULK_CU_RESISTIVITY, wire_width,
+          wire_thickness, barrier_thickness, dishing_thickness, alpha_scatter);
+        ild_thickness[0][0] = 0.078;
+        miller_value[0][0] = 1.5;
+        horiz_dielectric_constant[0][0] = 1.022;
+        vert_dielectric_constant[0][0] = 3.9;
+        fringe_cap = 0.115e-15;
+        wire_c_per_micron[0][0] = wire_capacitance(wire_width, wire_thickness, wire_spacing,
+          ild_thickness[0][0], miller_value[0][0], horiz_dielectric_constant[0][0], vert_dielectric_constant[0][0],
+          fringe_cap);
+
+        wire_pitch[0][1] = 4 * g_ip->F_sz_um;//semi-global
+        aspect_ratio[0][1] = 3.0;
+        wire_width = wire_pitch[0][1] / 2;
+        wire_thickness = aspect_ratio[0][1] * wire_width;
+        wire_spacing = wire_pitch[0][1] - wire_width;
+        wire_r_per_micron[0][1] = wire_resistance(BULK_CU_RESISTIVITY, wire_width,
+          wire_thickness, barrier_thickness, dishing_thickness, alpha_scatter);
+        ild_thickness[0][1] = 0.078;
+        miller_value[0][1] = 1.5;
+        horiz_dielectric_constant[0][1] = 1.022;
+        vert_dielectric_constant[0][1] = 3.9;
+        wire_c_per_micron[0][1] = wire_capacitance(wire_width, wire_thickness, wire_spacing,
+          ild_thickness[0][1], miller_value[0][1], horiz_dielectric_constant[0][1], vert_dielectric_constant[0][1],
+          fringe_cap);
+
+        wire_pitch[0][2] = 8 * g_ip->F_sz_um;//global
+        aspect_ratio[0][2] = 3.0;
+        wire_width = wire_pitch[0][2] / 2;
+        wire_thickness = aspect_ratio[0][2] * wire_width;
+        wire_spacing = wire_pitch[0][2] - wire_width;
+        wire_r_per_micron[0][2] = wire_resistance(BULK_CU_RESISTIVITY, wire_width,
+            wire_thickness, barrier_thickness, dishing_thickness, alpha_scatter);
+        ild_thickness[0][2] = 0.156;
+        miller_value[0][2] = 1.5;
+        horiz_dielectric_constant[0][2] = 1.022;
+        vert_dielectric_constant[0][2] = 3.9;
+        wire_c_per_micron[0][2] = wire_capacitance(wire_width, wire_thickness, wire_spacing,
+            ild_thickness[0][2], miller_value[0][2], horiz_dielectric_constant[0][2], vert_dielectric_constant[0][2],
+            fringe_cap);
+
+//          //*************************
+//          wire_pitch[0][4] = 16 * g_ip.F_sz_um;//global
+//          aspect_ratio = 3.0;
+//          wire_width = wire_pitch[0][4] / 2;
+//          wire_thickness = aspect_ratio * wire_width;
+//          wire_spacing = wire_pitch[0][4] - wire_width;
+//          wire_r_per_micron[0][4] = wire_resistance(BULK_CU_RESISTIVITY, wire_width,
+//        		  wire_thickness, barrier_thickness, dishing_thickness, alpha_scatter);
+//          ild_thickness = 0.3;
+//          wire_c_per_micron[0][4] = wire_capacitance(wire_width, wire_thickness, wire_spacing,
+//        		  ild_thickness, miller_value, horiz_dielectric_constant, vert_dielectric_constant,
+//        		  fringe_cap);
+//
+//          wire_pitch[0][5] = 24 * g_ip.F_sz_um;//global
+//          aspect_ratio = 3.0;
+//          wire_width = wire_pitch[0][5] / 2;
+//          wire_thickness = aspect_ratio * wire_width;
+//          wire_spacing = wire_pitch[0][5] - wire_width;
+//          wire_r_per_micron[0][5] = wire_resistance(BULK_CU_RESISTIVITY, wire_width,
+//        		  wire_thickness, barrier_thickness, dishing_thickness, alpha_scatter);
+//          ild_thickness = 0.3;
+//          wire_c_per_micron[0][5] = wire_capacitance(wire_width, wire_thickness, wire_spacing,
+//        		  ild_thickness, miller_value, horiz_dielectric_constant, vert_dielectric_constant,
+//        		  fringe_cap);
+//
+//          wire_pitch[0][6] = 32 * g_ip.F_sz_um;//global
+//          aspect_ratio = 3.0;
+//          wire_width = wire_pitch[0][6] / 2;
+//          wire_thickness = aspect_ratio * wire_width;
+//          wire_spacing = wire_pitch[0][6] - wire_width;
+//          wire_r_per_micron[0][6] = wire_resistance(BULK_CU_RESISTIVITY, wire_width,
+//        		  wire_thickness, barrier_thickness, dishing_thickness, alpha_scatter);
+//          ild_thickness = 0.3;
+//          wire_c_per_micron[0][6] = wire_capacitance(wire_width, wire_thickness, wire_spacing,
+//        		  ild_thickness, miller_value, horiz_dielectric_constant, vert_dielectric_constant,
+//        		  fringe_cap);
+        //*************************
+
+        //Conservative projections
+        wire_pitch[1][0] = 2.5 * g_ip->F_sz_um;
+        aspect_ratio[1][0] = 2.0;
+        wire_width = wire_pitch[1][0] / 2;
+        wire_thickness = aspect_ratio[1][0] * wire_width;
+        wire_spacing = wire_pitch[1][0] - wire_width;
+        barrier_thickness = 0.001;
+        dishing_thickness = 0;
+        alpha_scatter = 1.05;
+        wire_r_per_micron[1][0] = wire_resistance(CU_RESISTIVITY, wire_width,
+          wire_thickness, barrier_thickness, dishing_thickness, alpha_scatter);
+        ild_thickness[1][0] = 0.078;
+        miller_value[1][0] = 1.5;
+        horiz_dielectric_constant[1][0] = 1.897;
+        vert_dielectric_constant[1][0] = 3.9;
+        fringe_cap = 0.115e-15;
+        wire_c_per_micron[1][0] = wire_capacitance(wire_width, wire_thickness, wire_spacing,
+          ild_thickness[1][0], miller_value[1][0], horiz_dielectric_constant[1][0], vert_dielectric_constant[1][0],
+          fringe_cap);
+
+        wire_pitch[1][1] = 4 * g_ip->F_sz_um;
+        wire_width = wire_pitch[1][1] / 2;
+        aspect_ratio[1][1] = 2.0;
+        wire_thickness = aspect_ratio[1][1] * wire_width;
+        wire_spacing = wire_pitch[1][1] - wire_width;
+        wire_r_per_micron[1][1] = wire_resistance(CU_RESISTIVITY, wire_width,
+          wire_thickness, barrier_thickness, dishing_thickness, alpha_scatter);
+        ild_thickness[1][1] = 0.078;
+        miller_value[1][1] = 1.5;
+        horiz_dielectric_constant[1][1] = 1.897;
+        vert_dielectric_constant[1][1] = 3.9;
+          wire_c_per_micron[1][1] = wire_capacitance(wire_width, wire_thickness, wire_spacing,
+          ild_thickness[1][1], miller_value[1][1], horiz_dielectric_constant[1][1], vert_dielectric_constant[1][1],
+          fringe_cap);
+
+          wire_pitch[1][2] = 8 * g_ip->F_sz_um;
+          aspect_ratio[1][2] = 2.2;
+          wire_width = wire_pitch[1][2] / 2;
+          wire_thickness = aspect_ratio[1][2] * wire_width;
+          wire_spacing = wire_pitch[1][2] - wire_width;
+          dishing_thickness = 0.1 *  wire_thickness;
+          wire_r_per_micron[1][2] = wire_resistance(CU_RESISTIVITY, wire_width,
+              wire_thickness, barrier_thickness, dishing_thickness, alpha_scatter);
+          ild_thickness[1][2] = 0.143;
+          miller_value[1][2] = 1.5;
+          horiz_dielectric_constant[1][2] = 1.897;
+          vert_dielectric_constant[1][2] = 3.9;
+          wire_c_per_micron[1][2] = wire_capacitance(wire_width, wire_thickness, wire_spacing,
+              ild_thickness[1][2], miller_value[1][2], horiz_dielectric_constant[1][2], vert_dielectric_constant[1][2],
+              fringe_cap);
+          //Nominal projections for commodity DRAM wordline/bitline
+          wire_pitch[1][3] = 2 * 0.007;//micron
+          wire_c_per_micron[1][3] = 31e-15 / (256 * 2 * 0.007);//F/micron
+          wire_r_per_micron[1][3] = 12 / 0.007;//ohm/micron
+
+          //******************
+//            wire_pitch[1][4] = 16 * g_ip.F_sz_um;
+//            aspect_ratio = 2.2;
+//            wire_width = wire_pitch[1][4] / 2;
+//            wire_thickness = aspect_ratio * wire_width;
+//            wire_spacing = wire_pitch[1][4] - wire_width;
+//            dishing_thickness = 0.1 *  wire_thickness;
+//            wire_r_per_micron[1][4] = wire_resistance(CU_RESISTIVITY, wire_width,
+//            		wire_thickness, barrier_thickness, dishing_thickness, alpha_scatter);
+//            ild_thickness = 0.275;
+//            wire_c_per_micron[1][4] = wire_capacitance(wire_width, wire_thickness, wire_spacing,
+//            		ild_thickness, miller_value, horiz_dielectric_constant, vert_dielectric_constant,
+//            		fringe_cap);
+//
+//            wire_pitch[1][5] = 24 * g_ip.F_sz_um;
+//            aspect_ratio = 2.2;
+//            wire_width = wire_pitch[1][5] / 2;
+//            wire_thickness = aspect_ratio * wire_width;
+//            wire_spacing = wire_pitch[1][5] - wire_width;
+//            dishing_thickness = 0.1 *  wire_thickness;
+//            wire_r_per_micron[1][5] = wire_resistance(CU_RESISTIVITY, wire_width,
+//            		wire_thickness, barrier_thickness, dishing_thickness, alpha_scatter);
+//            ild_thickness = 0.275;
+//            wire_c_per_micron[1][5] = wire_capacitance(wire_width, wire_thickness, wire_spacing,
+//            		ild_thickness, miller_value, horiz_dielectric_constant, vert_dielectric_constant,
+//            		fringe_cap);
+//
+//            wire_pitch[1][6] = 32 * g_ip.F_sz_um;
+//            aspect_ratio = 2.2;
+//            wire_width = wire_pitch[1][6] / 2;
+//            wire_thickness = aspect_ratio * wire_width;
+//            wire_spacing = wire_pitch[1][6] - wire_width;
+//            dishing_thickness = 0.1 *  wire_thickness;
+//            wire_r_per_micron[1][6] = wire_resistance(CU_RESISTIVITY, wire_width,
+//            		wire_thickness, barrier_thickness, dishing_thickness, alpha_scatter);
+//            ild_thickness = 0.275;
+//            wire_c_per_micron[1][6] = wire_capacitance(wire_width, wire_thickness, wire_spacing,
+//            		ild_thickness, miller_value, horiz_dielectric_constant, vert_dielectric_constant,
+//            		fringe_cap);
+      }
 
 
     g_tp.wire_local.pitch    += curr_alpha * wire_pitch[g_ip->ic_proj_type][(ram_cell_tech_type == comm_dram)?3:0];
