@@ -434,8 +434,11 @@ void Pipeline::compute_stage_vector()
 	num_piperegs = num_piperegs * 1.5;
 	tot_stage_vector=num_piperegs;
 	per_stage_vector=tot_stage_vector/num_stages;
-	if (coredynp.pipeline_stages>num_stages)
-		num_piperegs= per_stage_vector * coredynp.pipeline_stages;
+	if (coredynp.pipeline_stages != num_stages) {
+		if (coredynp.pipeline_stages < num_stages)
+			printf("Warning: The number of pipeline stages specified in the XML (%d) is less than the modelled number of stages (%d)\n", coredynp.pipeline_stages, num_stages);
+		num_piperegs = per_stage_vector * coredynp.pipeline_stages;
+	}
   }
 }
 

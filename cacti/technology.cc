@@ -2836,7 +2836,7 @@ void init_tech_params(double technology, bool is_tag)
       wire_c_per_micron[1][3] = 31e-15 / (256 * 2 * 0.032);//F/micron
       wire_r_per_micron[1][3] = 12 / 0.032;//ohm/micron
     }
-    else if (tech == 22 || tech == 7)
+    else if (tech == 22)
         {
  //Aggressive projections.
           wire_pitch[0][0] = 2.5 * g_ip->F_sz_um;//local
@@ -3023,7 +3023,7 @@ void init_tech_params(double technology, bool is_tag)
         
         }
 
-    else if (tech == 16)
+    else if (tech == 16 || tech == 7)
         {
           //Aggressive projections.
           wire_pitch[0][0] = 2.5 * g_ip->F_sz_um;//local
