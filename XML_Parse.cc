@@ -155,6 +155,7 @@ void ParseXML::parse(char* filepath)
 							if (strcmp(xNode3.getChildNode("param",k).getAttribute("name"),"internal_datapath_width")==0) {sys.core[i].internal_datapath_width=atoi(xNode3.getChildNode("param",k).getAttribute("value"));continue;}
 							if (strcmp(xNode3.getChildNode("param",k).getAttribute("name"),"number_hardware_threads")==0) {sys.core[i].number_hardware_threads=atoi(xNode3.getChildNode("param",k).getAttribute("value"));continue;}
 							if (strcmp(xNode3.getChildNode("param",k).getAttribute("name"),"fetch_width")==0) {sys.core[i].fetch_width=atoi(xNode3.getChildNode("param",k).getAttribute("value"));continue;}
+							if (strcmp(xNode3.getChildNode("param",k).getAttribute("name"),"rfp_on")==0) {sys.core[i].rfp_on=atoi(xNode3.getChildNode("param",k).getAttribute("value"));continue;}
 							if (strcmp(xNode3.getChildNode("param",k).getAttribute("name"),"number_instruction_fetch_ports")==0) {sys.core[i].number_instruction_fetch_ports=atoi(xNode3.getChildNode("param",k).getAttribute("value"));continue;}
 							if (strcmp(xNode3.getChildNode("param",k).getAttribute("name"),"decode_width")==0) {sys.core[i].decode_width=atoi(xNode3.getChildNode("param",k).getAttribute("value"));continue;}
 							if (strcmp(xNode3.getChildNode("param",k).getAttribute("name"),"issue_width")==0) {sys.core[i].issue_width=atoi(xNode3.getChildNode("param",k).getAttribute("value"));continue;}
@@ -584,6 +585,90 @@ void ParseXML::parse(char* filepath)
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"read_misses")==0) {sys.core[i].BTB.read_misses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"write_misses")==0) {sys.core[i].BTB.write_misses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"replacements")==0) {sys.core[i].BTB.replacements=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+							}
+						}
+						if (strcmp(xNode4.getAttribute("name"),"rfp_pt")==0)
+						{//find system.core0.rfp_pt
+							itmp=xNode4.nChildNode("param");
+							for(k=0; k<itmp; k++)
+							{
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"rfp_config")==0)
+								{
+									strtmp.assign(xNode4.getChildNode("param",k).getAttribute("value"));
+									m=0;
+									for(n=0; n<strtmp.length(); n++)
+									{
+										if (strtmp[n]!=',')
+										{
+											sprintf(chtmp,"%c",strtmp[n]);
+											strcat(chtmp1,chtmp);
+										}
+										else{
+											sys.core[i].rfp_pt.rfp_config[m]=atoi(chtmp1);
+											m++;
+											chtmp1[0]='\0';
+										}
+									}
+									sys.core[i].rfp_pt.rfp_config[m]=atoi(chtmp1);
+									m++;
+									chtmp1[0]='\0';
+								}
+							}
+							itmp=xNode4.nChildNode("stat");
+							for(k=0; k<itmp; k++)
+							{
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"total_accesses")==0) {sys.core[i].rfp_pt.total_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"read_accesses")==0) {sys.core[i].rfp_pt.read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"write_accesses")==0) {sys.core[i].rfp_pt.write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"total_hits")==0) {sys.core[i].rfp_pt.total_hits=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"total_misses")==0) {sys.core[i].rfp_pt.total_misses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"read_hits")==0) {sys.core[i].rfp_pt.read_hits=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"write_hits")==0) {sys.core[i].rfp_pt.write_hits=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"read_misses")==0) {sys.core[i].rfp_pt.read_misses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"write_misses")==0) {sys.core[i].rfp_pt.write_misses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"replacements")==0) {sys.core[i].rfp_pt.replacements=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+							}
+						}
+						if (strcmp(xNode4.getAttribute("name"),"rfp_pat")==0)
+						{//find system.core0.rfp_pat
+							itmp=xNode4.nChildNode("param");
+							for(k=0; k<itmp; k++)
+							{
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"rfp_config")==0)
+								{
+									strtmp.assign(xNode4.getChildNode("param",k).getAttribute("value"));
+									m=0;
+									for(n=0; n<strtmp.length(); n++)
+									{
+										if (strtmp[n]!=',')
+										{
+											sprintf(chtmp,"%c",strtmp[n]);
+											strcat(chtmp1,chtmp);
+										}
+										else{
+											sys.core[i].rfp_pat.rfp_config[m]=atoi(chtmp1);
+											m++;
+											chtmp1[0]='\0';
+										}
+									}
+									sys.core[i].rfp_pat.rfp_config[m]=atoi(chtmp1);
+									m++;
+									chtmp1[0]='\0';
+								}
+							}
+							itmp=xNode4.nChildNode("stat");
+							for(k=0; k<itmp; k++)
+							{
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"total_accesses")==0) {sys.core[i].rfp_pat.total_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"read_accesses")==0) {sys.core[i].rfp_pat.read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"write_accesses")==0) {sys.core[i].rfp_pat.write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"total_hits")==0) {sys.core[i].rfp_pat.total_hits=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"total_misses")==0) {sys.core[i].rfp_pat.total_misses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"read_hits")==0) {sys.core[i].rfp_pat.read_hits=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"write_hits")==0) {sys.core[i].rfp_pat.write_hits=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"read_misses")==0) {sys.core[i].rfp_pat.read_misses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"write_misses")==0) {sys.core[i].rfp_pat.write_misses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"replacements")==0) {sys.core[i].rfp_pat.replacements=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 							}
 						}
 					}
@@ -1633,6 +1718,15 @@ void ParseXML::initialize() //Initialize all
 		sys.core[i].BTB.read_misses=1;
 		sys.core[i].BTB.write_misses=1;
 		sys.core[i].BTB.replacements=1;
+		sys.core[i].rfp_on=0;
+		for (j=0; j<20; j++) sys.core[i].rfp_pt.rfp_config[j]=0;
+		sys.core[i].rfp_pt.total_accesses=0;
+		sys.core[i].rfp_pt.read_accesses=0;
+		sys.core[i].rfp_pt.write_accesses=0;
+		for (j=0; j<20; j++) sys.core[i].rfp_pat.rfp_config[j]=0;
+		sys.core[i].rfp_pat.total_accesses=0;
+		sys.core[i].rfp_pat.read_accesses=0;
+		sys.core[i].rfp_pat.write_accesses=0;
 	}
 
 	//system_L1directory

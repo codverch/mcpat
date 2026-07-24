@@ -153,6 +153,9 @@ class LoadStoreU :public Component {
 	DataCache dcache;
 	ArrayST * LSQ;//it is actually the store queue but for inorder processors it serves as both loadQ and StoreQ
 	ArrayST * LoadQ;
+	ArrayST * RFP_PT;
+	ArrayST * RFP_PAT;
+	bool rfp_exist;
 	bool exist;
 
 	LoadStoreU(ParseXML *XML_interface, int ithCore_, InputParameter* interface_ip_,const CoreDynParam & dyn_p_, bool exist_=true);

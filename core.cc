@@ -715,6 +715,9 @@ LoadStoreU::LoadStoreU(ParseXML* XML_interface, int ithCore_, InputParameter* in
  coredynp(dyn_p_),
  LSQ(0),
  LoadQ(0),
+ RFP_PT(0),
+ RFP_PAT(0),
+ rfp_exist(false),
  exist(exist_)
 {
 	  if (!exist) return;
@@ -930,6 +933,47 @@ LoadStoreU::LoadStoreU(ParseXML* XML_interface, int ithCore_, InputParameter* in
 		  //output_data_csv(LoadQ.LoadQ.local_result);
 		  lsq_height=(LSQ->local_result.cache_ht + LoadQ->local_result.cache_ht)*sqrt(cdb_overhead);/*XML->sys.core[ithCore].number_hardware_threads*/
 	  }
+
+	  rfp_exist = (XML->sys.core[ithCore].rfp_on != 0) &&
+	              (XML->sys.core[ithCore].rfp_pt.rfp_config[0] > 0);
+	  if (rfp_exist)
+	  {
+		  auto init_rfp_sram = [&](rfp_sram_systemcore &cfg, const char* name) -> ArrayST* {
+			  int size  = cfg.rfp_config[0];
+			  int line  = cfg.rfp_config[1];
+			  int assoc = cfg.rfp_config[2];
+			  int banks = cfg.rfp_config[3];
+			  interface_ip.is_cache            = true;
+			  interface_ip.pure_ram            = false;
+			  interface_ip.pure_cam            = false;
+			  interface_ip.specific_tag        = 1;
+			  interface_ip.tag_w               = debug?16:64;
+			  interface_ip.cache_sz            = debug?8192:size;
+			  interface_ip.line_sz             = debug?8:line;
+			  interface_ip.assoc               = debug?8:assoc;
+			  interface_ip.nbanks              = debug?1:banks;
+			  interface_ip.out_w               = interface_ip.line_sz*8;
+			  interface_ip.access_mode         = 0;
+			  interface_ip.throughput          = debug?1.0/clockRate:cfg.rfp_config[4]/clockRate;
+			  interface_ip.latency             = debug?1.0/clockRate:cfg.rfp_config[5]/clockRate;
+			  interface_ip.obj_func_dyn_energy = 0;
+			  interface_ip.obj_func_dyn_power  = 0;
+			  interface_ip.obj_func_leak_power = 0;
+			  interface_ip.obj_func_cycle_t    = 1;
+			  interface_ip.num_rw_ports        = 1;
+			  interface_ip.num_rd_ports        = XML->sys.core[ithCore].memory_ports;
+			  interface_ip.num_wr_ports        = XML->sys.core[ithCore].memory_ports;
+			  interface_ip.num_se_rd_ports     = 0;
+			  ArrayST* arr = new ArrayST(&interface_ip, name, Core_device, coredynp.opt_local, coredynp.core_ty);
+			  arr->area.set_area(arr->area.get_area()+ arr->local_result.area);
+			  area.set_area(area.get_area()+ arr->local_result.area);
+			  return arr;
+		  };
+
+		  RFP_PT  = init_rfp_sram(XML->sys.core[ithCore].rfp_pt,  "RFP Prefetch Table (PT)");
+		  RFP_PAT = init_rfp_sram(XML->sys.core[ithCore].rfp_pat, "RFP Page Address Table (PAT)");
+	  }
+
 	  area.set_area(area.get_area()*cdb_overhead);
 }
 
@@ -3230,6 +3274,16 @@ void LoadStoreU::computeEnergy(bool is_tdp)
 	    		LoadQ->stats_t.readAc.access = LoadQ->stats_t.writeAc.access = LoadQ->l_ip.num_search_ports*coredynp.LSU_duty_cycle;
 	    		LoadQ->tdp_stats = LoadQ->stats_t;
 	    	}
+	    	if (rfp_exist)
+	    	{
+	    		RFP_PT->stats_t.readAc.access  = XML->sys.core[ithCore].memory_ports*coredynp.LSU_duty_cycle;
+	    		RFP_PT->stats_t.writeAc.access = 0.1*XML->sys.core[ithCore].memory_ports*coredynp.LSU_duty_cycle;
+	    		RFP_PT->tdp_stats = RFP_PT->stats_t;
+
+	    		RFP_PAT->stats_t.readAc.access  = 0.5*XML->sys.core[ithCore].memory_ports*coredynp.LSU_duty_cycle;
+	    		RFP_PAT->stats_t.writeAc.access = 0.05*XML->sys.core[ithCore].memory_ports*coredynp.LSU_duty_cycle;
+	    		RFP_PAT->tdp_stats = RFP_PAT->stats_t;
+	    	}
 	    }
 	    else
 	    {
@@ -3285,6 +3339,16 @@ void LoadStoreU::computeEnergy(bool is_tdp)
 		    	LoadQ->stats_t.writeAc.access = XML->sys.core[ithCore].load_instructions + XML->sys.core[ithCore].store_instructions;
 		    	LoadQ->rtp_stats = LoadQ->stats_t;
 	    	}
+	    	if (rfp_exist)
+	    	{
+	    		RFP_PT->stats_t.readAc.access  = XML->sys.core[ithCore].rfp_pt.read_accesses;
+	    		RFP_PT->stats_t.writeAc.access = XML->sys.core[ithCore].rfp_pt.write_accesses;
+	    		RFP_PT->rtp_stats = RFP_PT->stats_t;
+
+	    		RFP_PAT->stats_t.readAc.access  = XML->sys.core[ithCore].rfp_pat.read_accesses;
+	    		RFP_PAT->stats_t.writeAc.access = XML->sys.core[ithCore].rfp_pat.write_accesses;
+	    		RFP_PAT->rtp_stats = RFP_PAT->stats_t;
+	    	}
 
 	    }
 
@@ -3330,6 +3394,16 @@ void LoadStoreU::computeEnergy(bool is_tdp)
 
     }
 
+    if (rfp_exist)
+    {
+    	RFP_PT->power_t.reset();
+    	RFP_PAT->power_t.reset();
+    	RFP_PT->power_t.readOp.dynamic  += RFP_PT->local_result.power.readOp.dynamic*RFP_PT->stats_t.readAc.access +
+    			RFP_PT->stats_t.writeAc.access*RFP_PT->local_result.power.writeOp.dynamic;
+    	RFP_PAT->power_t.readOp.dynamic += RFP_PAT->local_result.power.readOp.dynamic*RFP_PAT->stats_t.readAc.access +
+    			RFP_PAT->stats_t.writeAc.access*RFP_PAT->local_result.power.writeOp.dynamic;
+    }
+
     if (is_tdp)
     {
 //    	dcache.power = dcache.power_t + (dcache.caches->local_result.power)*pppm_lkg +
@@ -3353,6 +3427,12 @@ void LoadStoreU::computeEnergy(bool is_tdp)
     	{
     		LoadQ->power = LoadQ->power_t + LoadQ->local_result.power *pppm_lkg;
     		power     = power + LoadQ->power;
+    	}
+    	if (rfp_exist)
+    	{
+    		RFP_PT->power = RFP_PT->power_t + RFP_PT->local_result.power*pppm_lkg;
+    		RFP_PAT->power = RFP_PAT->power_t + RFP_PAT->local_result.power*pppm_lkg;
+    		power = power + RFP_PT->power + RFP_PAT->power;
     	}
     }
     else
@@ -3380,6 +3460,12 @@ void LoadStoreU::computeEnergy(bool is_tdp)
     	{
     		LoadQ->rt_power = LoadQ->power_t + LoadQ->local_result.power *pppm_lkg;
     		rt_power     = rt_power + LoadQ->rt_power;
+    	}
+    	if (rfp_exist)
+    	{
+    		RFP_PT->rt_power = RFP_PT->power_t + RFP_PT->local_result.power*pppm_lkg;
+    		RFP_PAT->rt_power = RFP_PAT->power_t + RFP_PAT->local_result.power*pppm_lkg;
+    		rt_power = rt_power + RFP_PT->rt_power + RFP_PAT->rt_power;
     	}
     }
 }
@@ -3443,6 +3529,25 @@ void LoadStoreU::displayEnergy(uint32_t indent,int plevel,bool is_tdp)
 					<< (long_channel? LSQ->power.readOp.power_gated_with_long_channel_leakage : LSQ->power.readOp.power_gated_leakage)  << " W" << endl;
 			cout << indent_str_next << "Gate Leakage = " << LSQ->power.readOp.gate_leakage  << " W" << endl;
 			cout << indent_str_next << "Runtime Dynamic = " << LSQ->rt_power.readOp.dynamic/executionTime<< " W" << endl;
+			cout <<endl;
+		}
+		if (rfp_exist)
+		{
+			cout << indent_str << "RFP Prefetch Table (PT):" << endl;
+			cout << indent_str_next << "Area = " << RFP_PT->area.get_area()*1e-6 << " mm^2" << endl;
+			cout << indent_str_next << "Peak Dynamic = " << RFP_PT->power.readOp.dynamic*clockRate << " W" << endl;
+			cout << indent_str_next << "Subthreshold Leakage = "
+				<< (long_channel? RFP_PT->power.readOp.longer_channel_leakage:RFP_PT->power.readOp.leakage) << " W" << endl;
+			cout << indent_str_next << "Gate Leakage = " << RFP_PT->power.readOp.gate_leakage << " W" << endl;
+			cout << indent_str_next << "Runtime Dynamic = " << RFP_PT->rt_power.readOp.dynamic/executionTime << " W" << endl;
+			cout <<endl;
+			cout << indent_str << "RFP Page Address Table (PAT):" << endl;
+			cout << indent_str_next << "Area = " << RFP_PAT->area.get_area()*1e-6 << " mm^2" << endl;
+			cout << indent_str_next << "Peak Dynamic = " << RFP_PAT->power.readOp.dynamic*clockRate << " W" << endl;
+			cout << indent_str_next << "Subthreshold Leakage = "
+				<< (long_channel? RFP_PAT->power.readOp.longer_channel_leakage:RFP_PAT->power.readOp.leakage) << " W" << endl;
+			cout << indent_str_next << "Gate Leakage = " << RFP_PAT->power.readOp.gate_leakage << " W" << endl;
+			cout << indent_str_next << "Runtime Dynamic = " << RFP_PAT->rt_power.readOp.dynamic/executionTime << " W" << endl;
 			cout <<endl;
 		}
 	}
@@ -4221,6 +4326,8 @@ LoadStoreU ::~LoadStoreU(){
 	if (!exist) return;
 	if(LSQ) 	               {delete LSQ; LSQ = 0;}
 	if(LoadQ) 	               {delete LoadQ; LoadQ = 0;}
+	if(RFP_PT)                 {delete RFP_PT; RFP_PT = 0;}
+	if(RFP_PAT)                {delete RFP_PAT; RFP_PAT = 0;}
 }
 
 MemManU ::~MemManU(){

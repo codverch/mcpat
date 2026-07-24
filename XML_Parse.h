@@ -150,6 +150,22 @@ typedef struct{
 	double write_misses;
 	double replacements;
 } BTB_systemcore;
+/* RFP (Register File Prefetch) PT/PAT SRAM tables — ISCA'22 Table 1 storage. */
+typedef struct{
+	//params
+	int rfp_config[20];
+	//stats
+	double total_accesses;
+	double read_accesses;
+	double write_accesses;
+	double total_hits;
+	double total_misses;
+	double read_hits;
+	double write_hits;
+	double read_misses;
+	double write_misses;
+	double replacements;
+} rfp_sram_systemcore;
 typedef struct{
 	//all params at the level of system.core(0-n)
 	int clock_rate;
@@ -289,6 +305,9 @@ typedef struct{
 	dtlb_systemcore dtlb;
 	dcache_systemcore dcache;
 	BTB_systemcore BTB;
+	int rfp_on;
+	rfp_sram_systemcore rfp_pt;
+	rfp_sram_systemcore rfp_pat;
 
 } system_core;
 typedef struct{
