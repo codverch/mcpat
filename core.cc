@@ -1820,9 +1820,10 @@ Core::Core(ParseXML* XML_interface, int ithCore_, InputParameter* interface_ip_)
  mmu  (0),
  exu  (0),
  rnu  (0),
- corepipe (0),
- undiffCore (0),
- l2cache (0)
+  corepipe (0),
+  undiffCore (0),
+  l2cache (0),
+  helios (0)
 {
  /*
   * initialize, compute and optimize individual components.
@@ -1848,6 +1849,7 @@ Core::Core(ParseXML* XML_interface, int ithCore_, InputParameter* interface_ip_)
   lsu          = new LoadStoreU(XML, ithCore, &interface_ip,coredynp,exit_flag);
   mmu          = new MemManU   (XML, ithCore, &interface_ip,coredynp,exit_flag);
   exu          = new EXECU     (XML, ithCore, &interface_ip,lsu->lsq_height, coredynp,exit_flag);
+  helios       = new HeliosUnit (XML, ithCore, &interface_ip, coredynp, exit_flag);
   undiffCore   = new UndiffCore(XML, ithCore, &interface_ip,coredynp,exit_flag);
   if (coredynp.core_ty==OOO)
   {
@@ -1887,6 +1889,10 @@ Core::Core(ParseXML* XML_interface, int ithCore_, InputParameter* interface_ip_)
   {
 	  mmu->area.set_area(mmu->area.get_area() + pipeline_area_per_unit);
       area.set_area(area.get_area()+mmu->area.get_area());
+  }
+  if (helios->exist)
+  {
+      area.set_area(area.get_area() + helios->area.get_area());
   }
 
   if (coredynp.core_ty==OOO)
@@ -3927,6 +3933,12 @@ void Core::computeEnergy(bool is_tdp)
 
 		power     = power +  undiffCore->power;
 
+		if (helios->exist)
+		{
+			helios->computeEnergy(is_tdp);
+			power = power + helios->power;
+		}
+
 		if (XML->sys.Private_L2)
 		{
 
@@ -4027,6 +4039,11 @@ void Core::computeEnergy(bool is_tdp)
 		}
 
 		rt_power     = rt_power +  undiffCore->power;
+		if (helios->exist)
+		{
+			helios->computeEnergy(is_tdp);
+			rt_power = rt_power + helios->rt_power;
+		}
 //		cout << "EXE = " << exu->power.readOp.dynamic*clockRate  << " W" << endl;
 		if (XML->sys.Private_L2)
 		{
@@ -4152,6 +4169,10 @@ void Core::displayEnergy(uint32_t indent,int plevel,bool is_tdp)
 			cout << indent_str_next << "Gate Leakage = " << undiffCore->power.readOp.gate_leakage << " W" << endl;
 			//		cout << indent_str_next << "Runtime Dynamic = " << undiffCore->rt_power.readOp.dynamic/executionTime << " W" << endl;
 			cout <<endl;
+		}
+		if (helios->exist)
+		{
+			helios->displayEnergy(indent+2, plevel, is_tdp);
 		}
 		if (XML->sys.Private_L2)
 		{

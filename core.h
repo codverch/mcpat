@@ -40,6 +40,7 @@
 #include "interconnect.h"
 #include "basic_components.h"
 #include "sharedcache.h"
+#include "helios.h"
 
 class BranchPredictor :public Component {
   public:
@@ -249,6 +250,7 @@ class Core :public Component {
     Pipeline   * corepipe;
     UndiffCore * undiffCore;
     SharedCache * l2cache;
+    HeliosUnit * helios;
     CoreDynParam  coredynp;
     //full_decoder 	inst_decoder;
     //clock_network	clockNetwork;

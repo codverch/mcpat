@@ -64,6 +64,34 @@ typedef struct{
 	double predictor_accesses;
 } predictor_systemcore;
 typedef struct{
+	int enabled;
+	int fp_sets;
+	int fp_ways;
+	int fp_entry_bytes;
+	int selector_entries;
+	int selector_entry_bytes;
+	int load_head_entries;
+	int store_head_entries;
+	int head_entry_bytes;
+	int reg_track_entries;
+	int reg_track_entry_bytes;
+	int fusion_ring_entries;
+	int fusion_ring_entry_bytes;
+	int uch_load_entries;
+	int uch_store_entries;
+	int uch_entry_bytes;
+	double predictor_read_accesses;
+	double predictor_write_accesses;
+	double head_table_read_accesses;
+	double head_table_write_accesses;
+	double reg_track_read_accesses;
+	double reg_track_write_accesses;
+	double uch_read_accesses;
+	double uch_write_accesses;
+	double fusion_ring_read_accesses;
+	double fusion_ring_write_accesses;
+} helios_systemcore;
+typedef struct{
 	int number_entries;
 	int cache_policy;//0 no write or write-though with non-write allocate;1 write-back with write-allocate
 	double total_hits;
@@ -289,6 +317,7 @@ typedef struct{
 	dtlb_systemcore dtlb;
 	dcache_systemcore dcache;
 	BTB_systemcore BTB;
+	helios_systemcore helios;
 
 } system_core;
 typedef struct{

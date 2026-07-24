@@ -42,6 +42,7 @@ SRCS  = \
   core.cc \
   crossbar.cc \
   decoder.cc \
+  helios.cc \
   htree2.cc \
   interconnect.cc \
   io.cc \
