@@ -24,8 +24,6 @@ class HeliosUnit : public Component {
   ArrayST *selector_table;
   ArrayST *load_head_table;
   ArrayST *store_head_table;
-  ArrayST *reg_track_table;
-  ArrayST *fusion_ring;
   ArrayST *load_uch;
   ArrayST *store_uch;
 

@@ -73,10 +73,6 @@ typedef struct{
 	int load_head_entries;
 	int store_head_entries;
 	int head_entry_bytes;
-	int reg_track_entries;
-	int reg_track_entry_bytes;
-	int fusion_ring_entries;
-	int fusion_ring_entry_bytes;
 	int uch_load_entries;
 	int uch_store_entries;
 	int uch_entry_bytes;
@@ -84,12 +80,8 @@ typedef struct{
 	double predictor_write_accesses;
 	double head_table_read_accesses;
 	double head_table_write_accesses;
-	double reg_track_read_accesses;
-	double reg_track_write_accesses;
 	double uch_read_accesses;
 	double uch_write_accesses;
-	double fusion_ring_read_accesses;
-	double fusion_ring_write_accesses;
 } helios_systemcore;
 typedef struct{
 	int number_entries;

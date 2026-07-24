@@ -600,10 +600,6 @@ void ParseXML::parse(char* filepath)
 								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"load_head_entries")==0) {sys.core[i].helios.load_head_entries=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"store_head_entries")==0) {sys.core[i].helios.store_head_entries=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"head_entry_bytes")==0) {sys.core[i].helios.head_entry_bytes=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"reg_track_entries")==0) {sys.core[i].helios.reg_track_entries=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"reg_track_entry_bytes")==0) {sys.core[i].helios.reg_track_entry_bytes=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"fusion_ring_entries")==0) {sys.core[i].helios.fusion_ring_entries=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"fusion_ring_entry_bytes")==0) {sys.core[i].helios.fusion_ring_entry_bytes=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"uch_load_entries")==0) {sys.core[i].helios.uch_load_entries=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"uch_store_entries")==0) {sys.core[i].helios.uch_store_entries=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"uch_entry_bytes")==0) {sys.core[i].helios.uch_entry_bytes=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
@@ -615,12 +611,8 @@ void ParseXML::parse(char* filepath)
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"predictor_write_accesses")==0) {sys.core[i].helios.predictor_write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"head_table_read_accesses")==0) {sys.core[i].helios.head_table_read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"head_table_write_accesses")==0) {sys.core[i].helios.head_table_write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"reg_track_read_accesses")==0) {sys.core[i].helios.reg_track_read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"reg_track_write_accesses")==0) {sys.core[i].helios.reg_track_write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"uch_read_accesses")==0) {sys.core[i].helios.uch_read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"uch_write_accesses")==0) {sys.core[i].helios.uch_write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"fusion_ring_read_accesses")==0) {sys.core[i].helios.fusion_ring_read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"fusion_ring_write_accesses")==0) {sys.core[i].helios.fusion_ring_write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 							}
 						}
 					}
@@ -1680,10 +1672,6 @@ void ParseXML::initialize() //Initialize all
 		sys.core[i].helios.load_head_entries=140;
 		sys.core[i].helios.store_head_entries=140;
 		sys.core[i].helios.head_entry_bytes=24;
-		sys.core[i].helios.reg_track_entries=1024;
-		sys.core[i].helios.reg_track_entry_bytes=32;
-		sys.core[i].helios.fusion_ring_entries=8;
-		sys.core[i].helios.fusion_ring_entry_bytes=16;
 		sys.core[i].helios.uch_load_entries=6;
 		sys.core[i].helios.uch_store_entries=1;
 		sys.core[i].helios.uch_entry_bytes=32;
@@ -1691,12 +1679,8 @@ void ParseXML::initialize() //Initialize all
 		sys.core[i].helios.predictor_write_accesses=1;
 		sys.core[i].helios.head_table_read_accesses=1;
 		sys.core[i].helios.head_table_write_accesses=1;
-		sys.core[i].helios.reg_track_read_accesses=1;
-		sys.core[i].helios.reg_track_write_accesses=1;
 		sys.core[i].helios.uch_read_accesses=1;
 		sys.core[i].helios.uch_write_accesses=1;
-		sys.core[i].helios.fusion_ring_read_accesses=1;
-		sys.core[i].helios.fusion_ring_write_accesses=1;
 	}
 
 	//system_L1directory

@@ -1,13 +1,13 @@
 /*****************************************************************************
  * Helios load/store fusion power model for McPAT.
  *
- * Models the Scarab Helios structures:
+ * Models the paper's explicit Helios hardware structures:
  *  - local/global fusion predictors (set-associative)
  *  - selector table
- *  - load/store head tables
- *  - register tracking table
- *  - active fusion interval ring
+ *  - load/store head tables (140-entry AQ NCS tracking)
  *  - load/store unbounded commit history (UCH)
+ *
+ * Scarab-only bookkeeping (regTrackTable, activeFusions ring) is not modeled.
  *****************************************************************************/
 
 #include "helios.h"
@@ -83,8 +83,6 @@ HeliosUnit::HeliosUnit(ParseXML *XML_interface, int ithCore_, InputParameter *in
       selector_table(0),
       load_head_table(0),
       store_head_table(0),
-      reg_track_table(0),
-      fusion_ring(0),
       load_uch(0),
       store_uch(0) {
   if (!exist) return;
@@ -98,10 +96,6 @@ HeliosUnit::HeliosUnit(ParseXML *XML_interface, int ithCore_, InputParameter *in
   const int head_entry_bytes = cfg.head_entry_bytes;
   const int load_head_entries = cfg.load_head_entries;
   const int store_head_entries = cfg.store_head_entries;
-  const int reg_track_entry_bytes = cfg.reg_track_entry_bytes;
-  const int reg_track_entries = cfg.reg_track_entries;
-  const int fusion_ring_entry_bytes = cfg.fusion_ring_entry_bytes;
-  const int fusion_ring_entries = cfg.fusion_ring_entries;
   const int uch_entry_bytes = cfg.uch_entry_bytes;
   const int uch_load_entries = cfg.uch_load_entries;
   const int uch_store_entries = cfg.uch_store_entries;
@@ -118,10 +112,6 @@ HeliosUnit::HeliosUnit(ParseXML *XML_interface, int ithCore_, InputParameter *in
                                       false, 1, 1, clockRate, coredynp);
   store_head_table = make_helios_array(interface_ip, "Helios Store Head Table", head_entry_bytes, store_head_entries, 1,
                                        false, 1, 1, clockRate, coredynp);
-  reg_track_table = make_helios_array(interface_ip, "Helios Register Track Table", reg_track_entry_bytes,
-                                      reg_track_entries, 1, false, 1, 1, clockRate, coredynp);
-  fusion_ring = make_helios_array(interface_ip, "Helios Active Fusion Ring", fusion_ring_entry_bytes,
-                                  fusion_ring_entries, 1, false, 1, 1, clockRate, coredynp);
   load_uch = make_helios_array(interface_ip, "Helios Load UCH", uch_entry_bytes, uch_load_entries, 1, false, 1, 1,
                                clockRate, coredynp);
   store_uch = make_helios_array(interface_ip, "Helios Store UCH", uch_entry_bytes, uch_store_entries, 1, false, 1, 1,
@@ -132,8 +122,6 @@ HeliosUnit::HeliosUnit(ParseXML *XML_interface, int ithCore_, InputParameter *in
   area.set_area(area.get_area() + selector_table->local_result.area);
   area.set_area(area.get_area() + load_head_table->local_result.area);
   area.set_area(area.get_area() + store_head_table->local_result.area);
-  area.set_area(area.get_area() + reg_track_table->local_result.area);
-  area.set_area(area.get_area() + fusion_ring->local_result.area);
   area.set_area(area.get_area() + load_uch->local_result.area);
   area.set_area(area.get_area() + store_uch->local_result.area);
 }
@@ -146,35 +134,23 @@ void HeliosUnit::computeEnergy(bool is_tdp) {
   double pred_writes = 0.0;
   double head_reads = 0.0;
   double head_writes = 0.0;
-  double reg_reads = 0.0;
-  double reg_writes = 0.0;
   double uch_reads = 0.0;
   double uch_writes = 0.0;
-  double ring_reads = 0.0;
-  double ring_writes = 0.0;
 
   if (is_tdp) {
     pred_reads = coredynp.LSU_duty_cycle;
     pred_writes = 0.1 * coredynp.LSU_duty_cycle;
     head_reads = coredynp.LSU_duty_cycle;
     head_writes = 0.5 * coredynp.LSU_duty_cycle;
-    reg_reads = 0.25 * coredynp.LSU_duty_cycle;
-    reg_writes = coredynp.LSU_duty_cycle;
     uch_reads = 0.5 * coredynp.LSU_duty_cycle;
     uch_writes = 0.25 * coredynp.LSU_duty_cycle;
-    ring_reads = 0.1 * coredynp.LSU_duty_cycle;
-    ring_writes = 0.05 * coredynp.LSU_duty_cycle;
   } else {
     pred_reads = stats.predictor_read_accesses;
     pred_writes = stats.predictor_write_accesses;
     head_reads = stats.head_table_read_accesses;
     head_writes = stats.head_table_write_accesses;
-    reg_reads = stats.reg_track_read_accesses;
-    reg_writes = stats.reg_track_write_accesses;
     uch_reads = stats.uch_read_accesses;
     uch_writes = stats.uch_write_accesses;
-    ring_reads = stats.fusion_ring_read_accesses;
-    ring_writes = stats.fusion_ring_write_accesses;
   }
 
   drive_array(local_predictor, pred_reads, pred_writes, is_tdp);
@@ -182,8 +158,6 @@ void HeliosUnit::computeEnergy(bool is_tdp) {
   drive_array(selector_table, pred_reads, pred_writes, is_tdp);
   drive_array(load_head_table, head_reads, head_writes, is_tdp);
   drive_array(store_head_table, head_reads, head_writes, is_tdp);
-  drive_array(reg_track_table, reg_reads, reg_writes, is_tdp);
-  drive_array(fusion_ring, ring_reads, ring_writes, is_tdp);
   drive_array(load_uch, uch_reads, uch_writes, is_tdp);
   drive_array(store_uch, uch_reads, uch_writes, is_tdp);
 
@@ -194,8 +168,6 @@ void HeliosUnit::computeEnergy(bool is_tdp) {
   finalize_array(selector_table, is_tdp, coredynp, power, rt_power);
   finalize_array(load_head_table, is_tdp, coredynp, power, rt_power);
   finalize_array(store_head_table, is_tdp, coredynp, power, rt_power);
-  finalize_array(reg_track_table, is_tdp, coredynp, power, rt_power);
-  finalize_array(fusion_ring, is_tdp, coredynp, power, rt_power);
   finalize_array(load_uch, is_tdp, coredynp, power, rt_power);
   finalize_array(store_uch, is_tdp, coredynp, power, rt_power);
 }
@@ -224,12 +196,11 @@ void HeliosUnit::displayEnergy(uint32_t indent, int plevel, bool is_tdp) {
 
   if (plevel <= 2) return;
 
-  ArrayST *arrays[] = {local_predictor,   global_predictor, selector_table, load_head_table, store_head_table,
-                       reg_track_table,   fusion_ring,      load_uch,       store_uch};
+  ArrayST *arrays[] = {local_predictor, global_predictor, selector_table, load_head_table, store_head_table, load_uch,
+                       store_uch};
   const char *names[] = {"Local Fusion Predictor", "Global Fusion Predictor", "Selector Table", "Load Head Table",
-                         "Store Head Table",       "Register Track Table",  "Fusion Ring",    "Load UCH",
-                         "Store UCH"};
-  for (int i = 0; i < 9; ++i) {
+                         "Store Head Table",       "Load UCH",              "Store UCH"};
+  for (int i = 0; i < 7; ++i) {
     ArrayST *array = arrays[i];
     if (!array) continue;
     cout << indent_str_next << names[i] << ":" << endl;
@@ -246,8 +217,6 @@ HeliosUnit::~HeliosUnit() {
   delete selector_table;
   delete load_head_table;
   delete store_head_table;
-  delete reg_track_table;
-  delete fusion_ring;
   delete load_uch;
   delete store_uch;
 }
