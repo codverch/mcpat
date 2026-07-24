@@ -162,6 +162,7 @@ void ParseXML::parse(char* filepath)
 							if (strcmp(xNode3.getChildNode("param",k).getAttribute("name"),"commit_width")==0) {sys.core[i].commit_width=atoi(xNode3.getChildNode("param",k).getAttribute("value"));continue;}
 							if (strcmp(xNode3.getChildNode("param",k).getAttribute("name"),"fp_issue_width")==0) {sys.core[i].fp_issue_width=atoi(xNode3.getChildNode("param",k).getAttribute("value"));continue;}
 							if (strcmp(xNode3.getChildNode("param",k).getAttribute("name"),"prediction_width")==0) {sys.core[i].prediction_width=atoi(xNode3.getChildNode("param",k).getAttribute("value"));continue;}
+							if (strcmp(xNode3.getChildNode("param",k).getAttribute("name"),"number_of_ifuse")==0) {sys.core[i].number_of_ifuse=atoi(xNode3.getChildNode("param",k).getAttribute("value"));continue;}
 							if (strcmp(xNode3.getChildNode("param",k).getAttribute("name"),"vdd")==0) {sys.core[i].vdd=atof(xNode3.getChildNode("param",k).getAttribute("value"));continue;}
 							if (strcmp(xNode3.getChildNode("param",k).getAttribute("name"),"power_gating_vcc")==0) {sys.core[i].power_gating_vcc=atof(xNode3.getChildNode("param",k).getAttribute("value"));continue;}
 
@@ -584,6 +585,40 @@ void ParseXML::parse(char* filepath)
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"read_misses")==0) {sys.core[i].BTB.read_misses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"write_misses")==0) {sys.core[i].BTB.write_misses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"replacements")==0) {sys.core[i].BTB.replacements=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+							}
+						}
+						if (strcmp(xNode4.getAttribute("name"),"IFuse")==0)
+						{//find system.core0.IFuse
+							itmp=xNode4.nChildNode("param");
+							for(k=0; k<itmp; k++)
+							{
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"enabled")==0) {sys.core[i].ifuse.enabled=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"pc_tag_bits")==0) {sys.core[i].ifuse.pc_tag_bits=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"training_table_sets")==0) {sys.core[i].ifuse.training_table_sets=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"training_table_ways")==0) {sys.core[i].ifuse.training_table_ways=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"training_insert_threshold")==0) {sys.core[i].ifuse.training_insert_threshold=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"training_table_block_tag_bits")==0) {sys.core[i].ifuse.training_table_block_tag_bits=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"training_observation_counter_bits")==0) {sys.core[i].ifuse.training_observation_counter_bits=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"fct_entries")==0) {sys.core[i].ifuse.fct_entries=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"rlb_entries")==0) {sys.core[i].ifuse.rlb_entries=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"apt_sets")==0) {sys.core[i].ifuse.apt_sets=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"apt_ways")==0) {sys.core[i].ifuse.apt_ways=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"aci_sets")==0) {sys.core[i].ifuse.aci_sets=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"aci_ways")==0) {sys.core[i].ifuse.aci_ways=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
+							}
+							itmp=xNode4.nChildNode("stat");
+							for(k=0; k<itmp; k++)
+							{
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"rlb_read_accesses")==0) {sys.core[i].ifuse.rlb_read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"rlb_write_accesses")==0) {sys.core[i].ifuse.rlb_write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"fct_read_accesses")==0) {sys.core[i].ifuse.fct_read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"fct_write_accesses")==0) {sys.core[i].ifuse.fct_write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"tt_read_accesses")==0) {sys.core[i].ifuse.tt_read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"tt_write_accesses")==0) {sys.core[i].ifuse.tt_write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"apt_read_accesses")==0) {sys.core[i].ifuse.apt_read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"apt_write_accesses")==0) {sys.core[i].ifuse.apt_write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"aci_read_accesses")==0) {sys.core[i].ifuse.aci_read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"aci_write_accesses")==0) {sys.core[i].ifuse.aci_write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
 							}
 						}
 					}
@@ -1633,6 +1668,31 @@ void ParseXML::initialize() //Initialize all
 		sys.core[i].BTB.read_misses=1;
 		sys.core[i].BTB.write_misses=1;
 		sys.core[i].BTB.replacements=1;
+		//system.core?.IFuse
+		sys.core[i].number_of_ifuse=0;
+		sys.core[i].ifuse.enabled=0;
+		sys.core[i].ifuse.pc_tag_bits=32;
+		sys.core[i].ifuse.training_table_sets=32;
+		sys.core[i].ifuse.training_table_ways=4;
+		sys.core[i].ifuse.training_insert_threshold=1000;
+		sys.core[i].ifuse.training_table_block_tag_bits=20;
+		sys.core[i].ifuse.training_observation_counter_bits=14;
+		sys.core[i].ifuse.fct_entries=512;
+		sys.core[i].ifuse.rlb_entries=512;
+		sys.core[i].ifuse.apt_sets=64;
+		sys.core[i].ifuse.apt_ways=4;
+		sys.core[i].ifuse.aci_sets=64;
+		sys.core[i].ifuse.aci_ways=4;
+		sys.core[i].ifuse.rlb_read_accesses=1;
+		sys.core[i].ifuse.rlb_write_accesses=1;
+		sys.core[i].ifuse.fct_read_accesses=1;
+		sys.core[i].ifuse.fct_write_accesses=1;
+		sys.core[i].ifuse.tt_read_accesses=1;
+		sys.core[i].ifuse.tt_write_accesses=1;
+		sys.core[i].ifuse.apt_read_accesses=1;
+		sys.core[i].ifuse.apt_write_accesses=1;
+		sys.core[i].ifuse.aci_read_accesses=1;
+		sys.core[i].ifuse.aci_write_accesses=1;
 	}
 
 	//system_L1directory

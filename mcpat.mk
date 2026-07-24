@@ -40,6 +40,7 @@ SRCS  = \
   cacti_interface.cc \
   component.cc \
   core.cc \
+  ifuse.cc \
   crossbar.cc \
   decoder.cc \
   htree2.cc \

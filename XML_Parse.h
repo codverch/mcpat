@@ -151,6 +151,33 @@ typedef struct{
 	double replacements;
 } BTB_systemcore;
 typedef struct{
+	//params
+	int enabled;
+	int pc_tag_bits;
+	int training_table_sets;
+	int training_table_ways;
+	int training_insert_threshold;
+	int training_table_block_tag_bits;
+	int training_observation_counter_bits;
+	int fct_entries;
+	int rlb_entries;
+	int apt_sets;
+	int apt_ways;
+	int aci_sets;
+	int aci_ways;
+	//stats (runtime dynamic power from Scarab counters)
+	double rlb_read_accesses;
+	double rlb_write_accesses;
+	double fct_read_accesses;
+	double fct_write_accesses;
+	double tt_read_accesses;
+	double tt_write_accesses;
+	double apt_read_accesses;
+	double apt_write_accesses;
+	double aci_read_accesses;
+	double aci_write_accesses;
+} ifuse_systemcore;
+typedef struct{
 	//all params at the level of system.core(0-n)
 	int clock_rate;
 	bool opt_local;
@@ -200,6 +227,7 @@ typedef struct{
 	int prediction_width;
 	int number_of_BTB;
 	int number_of_BPT;
+	int number_of_ifuse;
 
 	//all stats at the level of system.core(0-n)
 	double total_instructions;
@@ -289,6 +317,7 @@ typedef struct{
 	dtlb_systemcore dtlb;
 	dcache_systemcore dcache;
 	BTB_systemcore BTB;
+	ifuse_systemcore ifuse;
 
 } system_core;
 typedef struct{

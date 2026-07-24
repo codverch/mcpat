@@ -1822,7 +1822,8 @@ Core::Core(ParseXML* XML_interface, int ithCore_, InputParameter* interface_ip_)
  rnu  (0),
  corepipe (0),
  undiffCore (0),
- l2cache (0)
+ l2cache (0),
+ ifuse (0)
 {
  /*
   * initialize, compute and optimize individual components.
@@ -1854,6 +1855,13 @@ Core::Core(ParseXML* XML_interface, int ithCore_, InputParameter* interface_ip_)
 	  rnu = new RENAMINGU(XML, ithCore, &interface_ip,coredynp);
   }
   corepipe = new Pipeline(&interface_ip,coredynp);
+
+  if (XML->sys.core[ithCore].number_of_ifuse > 0 ||
+      XML->sys.core[ithCore].ifuse.enabled > 0) {
+    XML->sys.core[ithCore].ifuse.enabled = 1;
+    ifuse = new IFuseU(XML, ithCore, &interface_ip, coredynp, exit_flag);
+    area.set_area(area.get_area() + ifuse->area.get_area());
+  }
 
   if (coredynp.core_ty==OOO)
   {
@@ -3878,6 +3886,11 @@ void Core::computeEnergy(bool is_tdp)
 		mmu->computeEnergy(is_tdp);
 		exu->computeEnergy(is_tdp);
 
+		if (ifuse && ifuse->exist) {
+			ifuse->computeEnergy(is_tdp);
+			power = power + ifuse->power;
+		}
+
 		if (coredynp.core_ty==OOO)
 		{
 			num_units = 5.0;
@@ -3943,6 +3956,11 @@ void Core::computeEnergy(bool is_tdp)
 		lsu->computeEnergy(is_tdp);
 		mmu->computeEnergy(is_tdp);
 		exu->computeEnergy(is_tdp);
+
+		if (ifuse && ifuse->exist) {
+			ifuse->computeEnergy(is_tdp);
+			rt_power = rt_power + ifuse->rt_power;
+		}
 
 		if (coredynp.core_ty==OOO)
 		{
@@ -4141,6 +4159,10 @@ void Core::displayEnergy(uint32_t indent,int plevel,bool is_tdp)
 				exu->displayEnergy(indent+4,plevel,is_tdp);
 			}
 		}
+		if (ifuse && ifuse->exist)
+		{
+			ifuse->displayEnergy(indent, plevel, is_tdp);
+		}
 		if (undiffCore->exist)
 		{
 			cout << indent_str << "Undifferentiated Core:" << endl;
@@ -4273,6 +4295,7 @@ Core ::~Core(){
     if(corepipe) 	           {delete corepipe; corepipe = 0;}
     if(undiffCore)             {delete undiffCore;undiffCore = 0;}
     if(l2cache)                {delete l2cache;l2cache = 0;}
+    if(ifuse)                  {delete ifuse;ifuse = 0;}
 	}
 
 void Core::set_core_param()

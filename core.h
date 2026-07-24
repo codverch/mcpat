@@ -33,6 +33,8 @@
 #ifndef CORE_H_
 #define CORE_H_
 
+#include "ifuse.h"
+
 #include "XML_Parse.h"
 #include "logic.h"
 #include "parameter.h"
@@ -249,6 +251,7 @@ class Core :public Component {
     Pipeline   * corepipe;
     UndiffCore * undiffCore;
     SharedCache * l2cache;
+    IFuseU * ifuse;
     CoreDynParam  coredynp;
     //full_decoder 	inst_decoder;
     //clock_network	clockNetwork;
