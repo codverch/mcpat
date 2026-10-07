@@ -1,30 +1,23 @@
-<!-- Add inside system.core0 (after BTB) to enable runtime I-Fuse power modeling.
-     training_insert_threshold is a promotion policy knob only; the modeled TT
-     observation counter is always 14 bits wide regardless of threshold. -->
+<!-- Add inside system.core0 (before BTB) to model I-Fuse. Table geometry
+     defaults match Scarab hpca2027-revision-ifuse; any <table>_<field> param
+     below overrides the default. Stats come from Scarab's ifuse.stat
+     (see scripts/ifuse_power/run_ifuse_power.py). -->
 <param name="number_of_ifuse" value="1"/>
 <component id="system.core0.IFuse" name="IFuse">
 	<param name="enabled" value="1"/>
-	<param name="pc_tag_bits" value="32"/>
-	<param name="rlb_entries" value="512"/>
-	<param name="fct_entries" value="512"/>
-	<param name="training_table_sets" value="32"/>
-	<param name="training_table_ways" value="4"/>
-	<param name="training_insert_threshold" value="1000"/>
-	<param name="training_table_block_tag_bits" value="20"/>
-	<param name="training_observation_counter_bits" value="14"/>
-	<param name="apt_sets" value="64"/>
-	<param name="apt_ways" value="4"/>
-	<param name="aci_sets" value="64"/>
-	<param name="aci_ways" value="4"/>
-	<!-- Runtime stats from Scarab (see power_scarab_config IFuse block). -->
-	<stat name="rlb_read_accesses" value="800000"/>
-	<stat name="rlb_write_accesses" value="800000"/>
-	<stat name="fct_read_accesses" value="800000"/>
-	<stat name="fct_write_accesses" value="2000"/>
-	<stat name="tt_read_accesses" value="50000"/>
-	<stat name="tt_write_accesses" value="50000"/>
-	<stat name="apt_read_accesses" value="800000"/>
-	<stat name="apt_write_accesses" value="80000"/>
-	<stat name="aci_read_accesses" value="800000"/>
-	<stat name="aci_write_accesses" value="80000"/>
+	<!-- fct, apt, aci, tt, rlb: sets, ways, tag_bits, data_bits,
+	     repl_bits_per_set, rd_ports, wr_ports -->
+	<param name="fct_sets" value="128"/>
+	<param name="fct_ways" value="4"/>
+	<param name="fct_rd_ports" value="6"/>
+	<stat name="fct_read_accesses" value="3761652"/>
+	<stat name="fct_write_accesses" value="2002788"/>
+	<stat name="apt_read_accesses" value="7766937"/>
+	<stat name="apt_write_accesses" value="6190300"/>
+	<stat name="aci_read_accesses" value="2002678"/>
+	<stat name="aci_write_accesses" value="2093811"/>
+	<stat name="tt_read_accesses" value="245378"/>
+	<stat name="tt_write_accesses" value="431548"/>
+	<stat name="rlb_read_accesses" value="9801426"/>
+	<stat name="rlb_write_accesses" value="5764330"/>
 </component>

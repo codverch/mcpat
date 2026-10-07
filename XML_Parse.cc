@@ -589,36 +589,41 @@ void ParseXML::parse(char* filepath)
 						}
 						if (strcmp(xNode4.getAttribute("name"),"IFuse")==0)
 						{//find system.core0.IFuse
+							static const char* tnames[IFUSE_NUM_TABLES]={"fct","apt","aci","tt","rlb"};
 							itmp=xNode4.nChildNode("param");
 							for(k=0; k<itmp; k++)
 							{
-								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"enabled")==0) {sys.core[i].ifuse.enabled=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"pc_tag_bits")==0) {sys.core[i].ifuse.pc_tag_bits=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"training_table_sets")==0) {sys.core[i].ifuse.training_table_sets=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"training_table_ways")==0) {sys.core[i].ifuse.training_table_ways=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"training_insert_threshold")==0) {sys.core[i].ifuse.training_insert_threshold=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"training_table_block_tag_bits")==0) {sys.core[i].ifuse.training_table_block_tag_bits=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"training_observation_counter_bits")==0) {sys.core[i].ifuse.training_observation_counter_bits=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"fct_entries")==0) {sys.core[i].ifuse.fct_entries=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"rlb_entries")==0) {sys.core[i].ifuse.rlb_entries=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"apt_sets")==0) {sys.core[i].ifuse.apt_sets=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"apt_ways")==0) {sys.core[i].ifuse.apt_ways=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"aci_sets")==0) {sys.core[i].ifuse.aci_sets=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("param",k).getAttribute("name"),"aci_ways")==0) {sys.core[i].ifuse.aci_ways=atoi(xNode4.getChildNode("param",k).getAttribute("value"));continue;}
+								const char* pname=xNode4.getChildNode("param",k).getAttribute("name");
+								int pval=atoi(xNode4.getChildNode("param",k).getAttribute("value"));
+								if (strcmp(pname,"enabled")==0) {sys.core[i].ifuse.enabled=pval;continue;}
+								for (int t=0; t<IFUSE_NUM_TABLES; t++)
+								{
+									size_t n=strlen(tnames[t]);
+									if (strncmp(pname,tnames[t],n)!=0 || pname[n]!='_') continue;
+									const char* f=pname+n+1;
+									ifuse_table_systemcore& tb=sys.core[i].ifuse.table[t];
+									if (strcmp(f,"sets")==0) tb.sets=pval;
+									else if (strcmp(f,"ways")==0) tb.ways=pval;
+									else if (strcmp(f,"tag_bits")==0) tb.tag_bits=pval;
+									else if (strcmp(f,"data_bits")==0) tb.data_bits=pval;
+									else if (strcmp(f,"repl_bits_per_set")==0) tb.repl_bits_per_set=pval;
+									else if (strcmp(f,"rd_ports")==0) tb.rd_ports=pval;
+									else if (strcmp(f,"wr_ports")==0) tb.wr_ports=pval;
+								}
 							}
 							itmp=xNode4.nChildNode("stat");
 							for(k=0; k<itmp; k++)
 							{
-								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"rlb_read_accesses")==0) {sys.core[i].ifuse.rlb_read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"rlb_write_accesses")==0) {sys.core[i].ifuse.rlb_write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"fct_read_accesses")==0) {sys.core[i].ifuse.fct_read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"fct_write_accesses")==0) {sys.core[i].ifuse.fct_write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"tt_read_accesses")==0) {sys.core[i].ifuse.tt_read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"tt_write_accesses")==0) {sys.core[i].ifuse.tt_write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"apt_read_accesses")==0) {sys.core[i].ifuse.apt_read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"apt_write_accesses")==0) {sys.core[i].ifuse.apt_write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"aci_read_accesses")==0) {sys.core[i].ifuse.aci_read_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
-								if (strcmp(xNode4.getChildNode("stat",k).getAttribute("name"),"aci_write_accesses")==0) {sys.core[i].ifuse.aci_write_accesses=atof(xNode4.getChildNode("stat",k).getAttribute("value"));continue;}
+								const char* sname=xNode4.getChildNode("stat",k).getAttribute("name");
+								double sval=atof(xNode4.getChildNode("stat",k).getAttribute("value"));
+								for (int t=0; t<IFUSE_NUM_TABLES; t++)
+								{
+									size_t n=strlen(tnames[t]);
+									if (strncmp(sname,tnames[t],n)!=0 || sname[n]!='_') continue;
+									const char* f=sname+n+1;
+									if (strcmp(f,"read_accesses")==0) sys.core[i].ifuse.table[t].read_accesses=sval;
+									else if (strcmp(f,"write_accesses")==0) sys.core[i].ifuse.table[t].write_accesses=sval;
+								}
 							}
 						}
 					}
@@ -1668,31 +1673,26 @@ void ParseXML::initialize() //Initialize all
 		sys.core[i].BTB.read_misses=1;
 		sys.core[i].BTB.write_misses=1;
 		sys.core[i].BTB.replacements=1;
-		//system.core?.IFuse
+		//system.core?.IFuse: defaults match Scarab hpca2027-revision-ifuse
 		sys.core[i].number_of_ifuse=0;
 		sys.core[i].ifuse.enabled=0;
-		sys.core[i].ifuse.pc_tag_bits=32;
-		sys.core[i].ifuse.training_table_sets=32;
-		sys.core[i].ifuse.training_table_ways=4;
-		sys.core[i].ifuse.training_insert_threshold=1000;
-		sys.core[i].ifuse.training_table_block_tag_bits=20;
-		sys.core[i].ifuse.training_observation_counter_bits=14;
-		sys.core[i].ifuse.fct_entries=512;
-		sys.core[i].ifuse.rlb_entries=512;
-		sys.core[i].ifuse.apt_sets=64;
-		sys.core[i].ifuse.apt_ways=4;
-		sys.core[i].ifuse.aci_sets=64;
-		sys.core[i].ifuse.aci_ways=4;
-		sys.core[i].ifuse.rlb_read_accesses=1;
-		sys.core[i].ifuse.rlb_write_accesses=1;
-		sys.core[i].ifuse.fct_read_accesses=1;
-		sys.core[i].ifuse.fct_write_accesses=1;
-		sys.core[i].ifuse.tt_read_accesses=1;
-		sys.core[i].ifuse.tt_write_accesses=1;
-		sys.core[i].ifuse.apt_read_accesses=1;
-		sys.core[i].ifuse.apt_write_accesses=1;
-		sys.core[i].ifuse.aci_read_accesses=1;
-		sys.core[i].ifuse.aci_write_accesses=1;
+		{
+			//                 sets ways tag data repl rd wr
+			static const int d[IFUSE_NUM_TABLES][7]={
+				{128,4,32,69,3,6,1},  //FCT
+				{ 32,8,43,21,7,6,6},  //APT
+				{ 64,4,36,20,3,1,1},  //ACI
+				{ 32,4,32,68,0,1,1},  //TT (RRPV in data)
+				{ 16,8,28,65,0,1,1}}; //RLB (timestamp in data)
+			for (int t=0; t<IFUSE_NUM_TABLES; t++)
+			{
+				ifuse_table_systemcore& tb=sys.core[i].ifuse.table[t];
+				tb.sets=d[t][0]; tb.ways=d[t][1]; tb.tag_bits=d[t][2];
+				tb.data_bits=d[t][3]; tb.repl_bits_per_set=d[t][4];
+				tb.rd_ports=d[t][5]; tb.wr_ports=d[t][6];
+				tb.read_accesses=0; tb.write_accesses=0;
+			}
+		}
 	}
 
 	//system_L1directory

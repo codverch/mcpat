@@ -1,0 +1,6 @@
+table,organization,storage_bits,area_mm2,access_ps,access_cycles,cycle_ps,read_pj,write_pj,leak_mw
+FCT,"128 sets x 4 ways, tag 32 b + data 69 b, 6R/1W",52096,0.155489,206.59,0.66,180.888,10.6332,14.5294,27.7706
+APT,"32 sets x 8 ways, tag 43 b + data 21 b, 6R/6W",16608,0.17446,235.055,0.75,167.3,5.7252,13.9182,39.0872
+ACI,"64 sets x 4 ways, tag 36 b + data 20 b, 1R/1W",14528,0.00790084,122.063,0.39,75.1253,1.37652,3.71804,3.67283
+TT,"32 sets x 4 ways, tag 32 b + data 68 b, 1R/1W",12800,0.0100933,118.814,0.38,86.3122,3.45116,4.48187,3.17232
+RLB,"16 sets x 8 ways, tag 28 b + data 65 b, 1R/1W",11904,0.0166001,126.972,0.41,129.433,6.358,6.61975,4.22991

@@ -150,32 +150,23 @@ typedef struct{
 	double write_misses;
 	double replacements;
 } BTB_systemcore;
+#define IFUSE_NUM_TABLES 5
+/* I-Fuse tables, in order: FCT, APT, ACI, TT, RLB. Each is a set-associative
+ * SRAM with a tag array (tag_bits) and a data array (data_bits). */
 typedef struct{
-	//params
+	int sets;
+	int ways;
+	int tag_bits;
+	int data_bits;
+	int repl_bits_per_set;
+	int rd_ports;
+	int wr_ports;
+	double read_accesses;
+	double write_accesses;
+} ifuse_table_systemcore;
+typedef struct{
 	int enabled;
-	int pc_tag_bits;
-	int training_table_sets;
-	int training_table_ways;
-	int training_insert_threshold;
-	int training_table_block_tag_bits;
-	int training_observation_counter_bits;
-	int fct_entries;
-	int rlb_entries;
-	int apt_sets;
-	int apt_ways;
-	int aci_sets;
-	int aci_ways;
-	//stats (runtime dynamic power from Scarab counters)
-	double rlb_read_accesses;
-	double rlb_write_accesses;
-	double fct_read_accesses;
-	double fct_write_accesses;
-	double tt_read_accesses;
-	double tt_write_accesses;
-	double apt_read_accesses;
-	double apt_write_accesses;
-	double aci_read_accesses;
-	double aci_write_accesses;
+	ifuse_table_systemcore table[IFUSE_NUM_TABLES];
 } ifuse_systemcore;
 typedef struct{
 	//all params at the level of system.core(0-n)

@@ -1,16 +1,15 @@
 /*****************************************************************************
- * I-Fuse (runtime load fusion) hardware structures for McPAT area/power modeling.
+ * I-Fuse (correlated load micro-op fusion) structures for McPAT.
  *
- * Models five on-core tables matching the Scarab runtime I-Fuse design:
- *   RLB  - direct-mapped retired load buffer (retire stage)
- *   TT   - set-associative training table (retire stage)
- *   FCT  - fusion candidate table keyed by LD1 PC (fetch stage)
- *   APT  - set-associative active pair table keyed by LD2 PC (fetch stage)
- *   ACI  - set-associative access-check index keyed by cache block (fetch stage)
+ * Models the five set-associative tables of Scarab hpca2027-revision-ifuse:
+ *   FCT - Fusion Candidate Table, indexed by LD1 PC (decode)
+ *   APT - Active Pair Tracker, indexed by LD2 PC (decode, rename)
+ *   ACI - Access Check Index, indexed by block address (execute)
+ *   TT  - Training Table, indexed by LD1 PC (retire)
+ *   RLB - Retired Load Buffer, indexed by block address (retire)
  *
- * Storage widths follow Scarab's hardware bit-packing model.  The training
- * observation counter is always 14 bits wide; --ifuse_training_insert_threshold
- * is a promotion policy knob only and does not change TT entry width.
+ * Each table is a CACTI cache-mode array with a tag array and a data array,
+ * plus an optional replacement-state RAM (tree-PLRU bits per set).
  *****************************************************************************/
 
 #ifndef IFUSE_H_
@@ -29,14 +28,8 @@ class IFuseU : public Component {
   CoreDynParam coredynp;
   bool exist;
 
-  ArrayST* rlb;
-  ArrayST* fct;
-  ArrayST* training_table;
-  ArrayST* apt;
-  ArrayST* aci;
-  ArrayST* tt_plru;
-  ArrayST* apt_plru;
-  ArrayST* aci_plru;
+  ArrayST* table[IFUSE_NUM_TABLES];
+  ArrayST* repl[IFUSE_NUM_TABLES];
 
   IFuseU(ParseXML* XML_interface, int ithCore_, InputParameter* interface_ip_,
          const CoreDynParam& dyn_p_, bool exist_ = true);
